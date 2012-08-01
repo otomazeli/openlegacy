@@ -1,15 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
-		<artifactId>openlegacy</artifactId>
-		<groupId>org.openlegacy</groupId>
-		<version>0.7-SNAPSHOT</version>
-		<relativePath>../openlegacy/pom.xml</relativePath>
+	    <groupId>org.openlegacy.ide</groupId>
+	    <artifactId>parent</artifactId>
+	    <version>0.7-SNAPSHOT</version>
+		<relativePath>../openlegacy-ide/pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>openlegacy-ide-eclipse</artifactId>
+	<artifactId>org.openlegacy.ide.eclipse</artifactId>
+	<version>0.7.0.qualifier</version>
 	<name>OpenLegacy eclipse plug-in</name>
-
+	<packaging>eclipse-plugin</packaging>
+	
 	<repositories>
 		<repository>
 			<id>eclipse</id>
@@ -17,11 +19,14 @@
 		</repository>
 	</repositories>
 
+	<properties>
+		<openlegacy.version>0.7-SNAPSHOT</openlegacy.version>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.openlegacy</groupId>
 			<artifactId>openlegacy-designtime</artifactId>
-			<version>${project.version}</version>
+			<version>${openlegacy.version}</version>
 		</dependency>
 	</dependencies>
 	
