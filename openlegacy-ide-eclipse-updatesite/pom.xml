@@ -7,8 +7,8 @@
     <relativePath>../openlegacy-ide/pom.xml</relativePath>
   </parent>
   
-  <artifactId>org.openlegacy.ide.eclipse.feature</artifactId>
+  <artifactId>org.openlegacy.ide.eclipse.updatesite</artifactId>
   <version>0.7.0-SNAPSHOT</version>
-  <packaging>eclipse-feature</packaging>
+  <packaging>eclipse-update-site</packaging>
   
 </project>
