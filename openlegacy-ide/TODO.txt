@@ -1,0 +1,2 @@
+Add Tycho support based on:
+https://github.com/pieceoftheloaf/tycho-examples.git
