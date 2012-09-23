@@ -10,28 +10,22 @@
  *******************************************************************************/
 package org.openlegacy.terminal.definitions;
 
-import org.apache.commons.collections.set.ListOrderedSet;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.openlegacy.EntityDefinition;
 import org.openlegacy.definitions.ActionDefinition;
-import org.openlegacy.definitions.support.SimpleEntityDefinition;
+import org.openlegacy.definitions.support.AbstractEntityDefinition;
 import org.openlegacy.terminal.ScreenSize;
 import org.openlegacy.terminal.TerminalSnapshot;
 import org.openlegacy.terminal.services.ScreenIdentification;
 import org.openlegacy.terminal.support.SimpleScreenIdentification;
 import org.openlegacy.terminal.support.TerminalPositionContainerComparator;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-public class SimpleScreenEntityDefinition extends SimpleEntityDefinition<ScreenFieldDefinition> implements ScreenEntityDefinition {
+public class SimpleScreenEntityDefinition extends AbstractEntityDefinition<ScreenFieldDefinition> implements ScreenEntityDefinition {
 
 	private ScreenIdentification screenIdentification = new SimpleScreenIdentification();
 	private NavigationDefinition navigationDefinition;
@@ -45,8 +39,6 @@ public class SimpleScreenEntityDefinition extends SimpleEntityDefinition<ScreenF
 	private TerminalSnapshot accessedFromSnapshot;
 	private ScreenEntityDefinition accessedFromScreenDefinition;
 	private ScreenSize screenSize;
-
-	private final static Log logger = LogFactory.getLog(SimpleScreenEntityDefinition.class);
 
 	public SimpleScreenEntityDefinition(String entityName, Class<?> entityClass) {
 		super(entityName, entityClass);
@@ -82,10 +74,6 @@ public class SimpleScreenEntityDefinition extends SimpleEntityDefinition<ScreenF
 
 	public void setSnapshot(TerminalSnapshot snapshot) {
 		this.snapshot = snapshot;
-	}
-
-	public String getPackageName() {
-		return getEntityClass().getPackage().getName();
 	}
 
 	public List<ActionDefinition> getActions() {
@@ -134,21 +122,6 @@ public class SimpleScreenEntityDefinition extends SimpleEntityDefinition<ScreenF
 
 	public boolean isChild() {
 		return child;
-	}
-
-	public Set<EntityDefinition<?>> getAllChildEntitiesDefinitions() {
-		@SuppressWarnings("unchecked")
-		Set<EntityDefinition<?>> childs = new ListOrderedSet();
-		childs.addAll(getChildEntitiesDefinitions());
-		for (EntityDefinition<?> childScreenDefinition : childs) {
-			Set<EntityDefinition<?>> childScreensDefinitions = childScreenDefinition.getAllChildEntitiesDefinitions();
-			if (childScreensDefinitions.size() > 0) {
-				logger.info(MessageFormat.format("Adding child screens to list all child screens. Adding: {0}",
-						childScreensDefinitions));
-				childs.addAll(childScreensDefinitions);
-			}
-		}
-		return childs;
 	}
 
 	public List<ScreenFieldDefinition> getSortedFields() {

@@ -26,7 +26,6 @@ public class SimpleScreenFieldDefinition extends AbstractFieldDefinition<ScreenF
 	private TerminalPosition position = null;
 	private int length;
 	private boolean editable;
-	private String sampleValue;
 	private Class<?> javaType;
 	private TerminalPosition labelPosition;
 	private boolean password;
@@ -63,14 +62,6 @@ public class SimpleScreenFieldDefinition extends AbstractFieldDefinition<ScreenF
 		this.editable = editable;
 	}
 
-	public String getSampleValue() {
-		return sampleValue;
-	}
-
-	public void setSampleValue(String sampleValue) {
-		this.sampleValue = sampleValue;
-	}
-
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
@@ -82,13 +73,6 @@ public class SimpleScreenFieldDefinition extends AbstractFieldDefinition<ScreenF
 
 	public TerminalPosition getEndPosition() {
 		return SnapshotUtils.getEndPosition(getPosition(), getLength());
-	}
-
-	public Class<?> getJavaType() {
-		if (javaType == null) {
-			javaType = String.class;
-		}
-		return javaType;
 	}
 
 	public String getJavaTypeName() {

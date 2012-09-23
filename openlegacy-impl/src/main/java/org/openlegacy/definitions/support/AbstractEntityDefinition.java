@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.openlegacy.definitions.support;
 
+import org.apache.commons.collections.set.ListOrderedSet;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openlegacy.EntityDefinition;
 import org.openlegacy.EntityType;
 import org.openlegacy.FieldType;
@@ -22,9 +25,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
-public abstract class SimpleEntityDefinition<F extends FieldDefinition> implements EntityDefinition<F> {
+public abstract class AbstractEntityDefinition<F extends FieldDefinition> implements EntityDefinition<F> {
+
+	private final static Log logger = LogFactory.getLog(AbstractEntityDefinition.class);
 
 	private String entityName;
 	private Class<?> entityClass;
@@ -38,7 +44,7 @@ public abstract class SimpleEntityDefinition<F extends FieldDefinition> implemen
 
 	private List<EntityDefinition<?>> childEntitiesDefinitions = new ArrayList<EntityDefinition<?>>();
 
-	public SimpleEntityDefinition(String entityName, Class<?> screenEntityClass) {
+	public AbstractEntityDefinition(String entityName, Class<?> screenEntityClass) {
 		this.entityName = entityName;
 		this.entityClass = screenEntityClass;
 	}
@@ -122,6 +128,25 @@ public abstract class SimpleEntityDefinition<F extends FieldDefinition> implemen
 
 	public List<EntityDefinition<?>> getChildEntitiesDefinitions() {
 		return childEntitiesDefinitions;
+	}
+
+	public String getPackageName() {
+		return getEntityClass().getPackage().getName();
+	}
+
+	public Set<EntityDefinition<?>> getAllChildEntitiesDefinitions() {
+		@SuppressWarnings("unchecked")
+		Set<EntityDefinition<?>> childs = new ListOrderedSet();
+		childs.addAll(getChildEntitiesDefinitions());
+		for (EntityDefinition<?> childScreenDefinition : childs) {
+			Set<EntityDefinition<?>> childScreensDefinitions = childScreenDefinition.getAllChildEntitiesDefinitions();
+			if (childScreensDefinitions.size() > 0) {
+				logger.info(MessageFormat.format("Adding child screens to list all child screens. Adding: {0}",
+						childScreensDefinitions));
+				childs.addAll(childScreensDefinitions);
+			}
+		}
+		return childs;
 	}
 
 }

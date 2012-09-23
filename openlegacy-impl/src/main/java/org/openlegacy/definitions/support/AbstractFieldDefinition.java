@@ -17,10 +17,12 @@ import org.openlegacy.definitions.FieldTypeDefinition;
 public abstract class AbstractFieldDefinition<D extends FieldDefinition> implements FieldDefinition {
 
 	private String name;
+	private String sampleValue;
 	private Class<? extends FieldType> type;
 	private String displayName;
 	private FieldTypeDefinition fieldTypeDefinition;
 	private boolean key;
+	private Class<?> javaType;
 
 	public AbstractFieldDefinition(String name, Class<? extends FieldType> type) {
 		this.name = name;
@@ -73,4 +75,20 @@ public abstract class AbstractFieldDefinition<D extends FieldDefinition> impleme
 	public void setKey(boolean key) {
 		this.key = key;
 	}
+
+	public String getSampleValue() {
+		return sampleValue;
+	}
+
+	public void setSampleValue(String sampleValue) {
+		this.sampleValue = sampleValue;
+	}
+
+	public Class<?> getJavaType() {
+		if (javaType == null) {
+			javaType = String.class;
+		}
+		return javaType;
+	}
+
 }
