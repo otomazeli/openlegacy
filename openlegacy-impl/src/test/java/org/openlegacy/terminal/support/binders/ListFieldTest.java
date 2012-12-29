@@ -20,7 +20,7 @@ import java.util.List;
 public class ListFieldTest extends AbstractTest {
 
 	@Test
-	public void tesListField() {
+	public void testListField() {
 
 		TerminalSession terminalSession = newTerminalSession();
 
@@ -39,8 +39,9 @@ public class ListFieldTest extends AbstractTest {
 	public void testSendListField() {
 		List<String> listNewValues = new ArrayList<String>();
 		listNewValues.add("Domino1");
-		listNewValues.add("Cube1");
-		listNewValues.add("Sevivon1");
+
+		listNewValues.add("Cube2");
+		listNewValues.add("Sevivon3");
 		TerminalSession terminalSession = newTerminalSession();
 
 		ListFieldEntity listScreenEntity = terminalSession.getEntity(ListFieldEntity.class);

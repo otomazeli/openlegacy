@@ -66,16 +66,16 @@ public class ScreenListFieldAnnotationLoader extends AbstractFieldAnnotationLoad
 		Assert.notNull(fieldDefinition, MessageFormat.format(
 				"Field definition for field {0} not found. Verify @ScreenListField is defined along @ScreenField annotation",
 				fieldName));
-		if (fieldDefinition.getJavaType() != List.class) {
+		System.out.println(fieldDefinition.getJavaType());
+		if (fieldDefinition.getJavaType() != List.class && fieldDefinition.getJavaType() != String[].class) {
 			throw (new RegistryException(MessageFormat.format(
 					"Field {0} marked with @ScreenListField must be of type java.util.List", fieldName)));
 		}
 
-		// TODO add validations: count > 1, positive numbers
 		Assert.isTrue(fieldAnnotation.count() > 1,
 				MessageFormat.format("count in @ScreenListField must be greater than 1", fieldName));
 		int[] gaps = fieldAnnotation.gaps();
-		Assert.isTrue(gaps.length == (fieldAnnotation.count() - 1));
+		Assert.isTrue(gaps.length == (fieldAnnotation.count() - 1) || gaps.length == 1);
 
 		for (int gap : gaps) {
 			Assert.isTrue(gap > 1,

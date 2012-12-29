@@ -6,24 +6,22 @@ import org.openlegacy.annotations.screen.ScreenField;
 import org.openlegacy.annotations.screen.ScreenIdentifiers;
 import org.openlegacy.annotations.screen.ScreenListField;
 
-import java.util.List;
-
 import junit.framework.Assert;
 
 @ScreenEntity
-@ScreenIdentifiers(identifiers = { @Identifier(row = 2, column = 27, value = "Items") })
-public class ListFieldEntity implements org.openlegacy.terminal.ScreenEntity {
+@ScreenIdentifiers(identifiers = { @Identifier(row = 2, column = 28, value = "Items") })
+public class ArrayFieldEntity implements org.openlegacy.terminal.ScreenEntity {
 
-	@ScreenListField(fieldLength = 9, count = 3, gaps = { 10, 10 })
+	@ScreenListField(fieldLength = 9, count = 3, gaps = { 10 })
 	@ScreenField(row = 8, column = 25)
-	private List<String> toys;
+	private String[] toys;
 
-	public List<String> getToys() {
+	public String[] getToys() {
 		return toys;
 	}
 
-	public void setToys(List<String> toys) {
-		Assert.assertEquals(toys.size(), this.toys.size());
+	public void setToys(String[] toys) {
+		Assert.assertEquals(toys.length, this.toys.length);
 		this.toys = toys;
 	}
 

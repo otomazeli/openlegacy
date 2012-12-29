@@ -17,14 +17,12 @@ import org.openlegacy.utils.ProxyUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import javax.inject.Inject;
 
 @Component
-public class ListFieldsBinder implements ScreenEntityBinder {
+public class ArrayFieldsBinder implements ScreenEntityBinder {
 
 	@Inject
 	private ScreenFieldsDefinitionProvider fieldMappingsProvider;
@@ -38,7 +36,7 @@ public class ListFieldsBinder implements ScreenEntityBinder {
 		Collection<ScreenFieldDefinition> fieldDefinitions = fieldMappingsProvider.getFieldsMappingDefinitions(snapshot, class1);
 
 		for (ScreenFieldDefinition fieldDefinition : fieldDefinitions) {
-			if (fieldDefinition.getJavaType() != List.class) {
+			if (fieldDefinition.getJavaType() != String[].class) {
 				continue;
 			}
 			// lazy creation - mostly not used
@@ -52,13 +50,15 @@ public class ListFieldsBinder implements ScreenEntityBinder {
 			int[] gapBetweenFields = fieldTypeDefinition.getGaps();
 			TerminalPosition position = fieldDefinition.getPosition();
 
-			List<String> members = new ArrayList<String>();
+			String[] members = new String[fieldsInList];
+
+			int skip = gapBetweenFields.length == 1 ? 0 : 1;
 			for (int i = 0; i < fieldsInList - 1; i++) {
 				// System.out.println(snapshot.getText(position, fieldTypeDefinition.getFieldLength()));
-				members.add(snapshot.getText(position, fieldTypeDefinition.getFieldLength()).trim());
-				position = position.moveBy(gapBetweenFields[i]);
+				members[i] = snapshot.getText(position, fieldTypeDefinition.getFieldLength()).trim();
+				position = position.moveBy(gapBetweenFields[i * skip]);
 			}
-			members.add(snapshot.getText(position, fieldTypeDefinition.getFieldLength()).trim());
+			members[fieldsInList - 1] = snapshot.getText(position, fieldTypeDefinition.getFieldLength()).trim();
 			fieldAccessor.setFieldValue(fieldDefinition.getName(), members);
 
 		}
@@ -89,7 +89,7 @@ public class ListFieldsBinder implements ScreenEntityBinder {
 				fieldAccessor = new SimpleScreenPojoFieldAccessor(screenEntity);
 			}
 
-			if (fieldDefinition.getJavaType() != List.class) {
+			if (fieldDefinition.getJavaType() != String[].class) {
 				continue;
 			}
 			ListFieldTypeDefinition fieldTypeDefinition = (ListFieldTypeDefinition)fieldDefinition.getFieldTypeDefinition();
@@ -97,23 +97,22 @@ public class ListFieldsBinder implements ScreenEntityBinder {
 			TerminalPosition position = fieldDefinition.getPosition();
 
 			@SuppressWarnings("unchecked")
-			List<String> fieldValue = (List<String>)fieldAccessor.getFieldValue(fieldDefinition.getName());
+			String[] fieldValue = (String[])fieldAccessor.getFieldValue(fieldDefinition.getName());
 			String formater = String.format("%%-%ds", fieldTypeDefinition.getFieldLength() + 1);
 			int gaps[] = fieldTypeDefinition.getGaps();
-
-			for (int i = 0; i < fieldTypeDefinition.getCount() - 1; i++) {
+			int skip = gaps.length == 1 ? 0 : 1;
+			for (int i = 0; i < fieldTypeDefinition.getCount(); i++) {
 				TerminalField field = snapshot.getField(SimpleTerminalPosition.newInstance(position.getRow(),
 						position.getColumn()));
 
-				field.setValue(String.format(formater, fieldValue.get(i)));
+				field.setValue(String.format(formater, fieldValue[i]));
 				sendAction.getModifiedFields().add(field);
 
-				if (i != fieldTypeDefinition.getCount() - 2) {
-					position.moveBy(gaps[i]);
+				if (i < fieldTypeDefinition.getCount() - 1) {
+					position = position.moveBy(gaps[i * skip]);
 				}
 			}
 
 		}
-
 	}
 }
