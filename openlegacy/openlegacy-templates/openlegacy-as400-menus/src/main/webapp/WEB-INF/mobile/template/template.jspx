@@ -34,7 +34,10 @@
 		<script src="${pageContext.request.contextPath}/js/project.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
 
 		<link href="${pageContext.request.contextPath}/dj/dijit.css" rel="stylesheet" type="text/css" />
-		<link href="${pageContext.request.contextPath}/themes/cloudm/cloudm.css" rel="stylesheet"/>
+		<c:if test="${openLegacyProperties.rightToLeft}">
+			<c:set var="cssRtl" value="_rtl" />
+		</c:if>
+		<link href="${pageContext.request.contextPath}/themes/cloudm/cloudm${cssRtl}.css" rel="stylesheet"/>
 		<link href="${pageContext.request.contextPath}/themes/cloudm/openlegacy.css" rel="stylesheet" />
 		<link href="${pageContext.request.contextPath}/css/project_m.css" rel="stylesheet" />
 
