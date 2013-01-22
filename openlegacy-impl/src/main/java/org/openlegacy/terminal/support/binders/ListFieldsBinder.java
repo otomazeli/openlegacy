@@ -1,5 +1,6 @@
 package org.openlegacy.terminal.support.binders;
 
+import org.openlegacy.FieldFormatter;
 import org.openlegacy.definitions.ListFieldTypeDefinition;
 import org.openlegacy.definitions.support.SimpleListFieldTypeDefinition;
 import org.openlegacy.terminal.ScreenEntity;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,6 +30,9 @@ public class ListFieldsBinder implements ScreenEntityBinder {
 
 	@Inject
 	private ScreenFieldsDefinitionProvider fieldMappingsProvider;
+
+	@Inject
+	private FieldFormatter fieldFormatter;
 
 	public void populateEntity(Object screenEntity, TerminalSnapshot snapshot) {
 
@@ -59,7 +64,8 @@ public class ListFieldsBinder implements ScreenEntityBinder {
 				members.add(snapshot.getText(position, fieldTypeDefinition.getFieldLength()).trim());
 				position = position.moveBy(gapBetweenFields[i * skip]);
 			}
-			members.add(snapshot.getText(position, fieldTypeDefinition.getFieldLength()).trim());
+			String text = snapshot.getText(position, fieldTypeDefinition.getFieldLength());
+			members.add(fieldFormatter.format(text));
 			if (fieldDefinition.getJavaType() == List.class) {
 				fieldAccessor.setFieldValue(fieldDefinition.getName(), members);
 			} else {
@@ -75,7 +81,6 @@ public class ListFieldsBinder implements ScreenEntityBinder {
 		if (entity == null) {
 			return;
 		}
-
 		Assert.isTrue(entity instanceof ScreenEntity, "screen entity must implement ScreenEntity interface");
 
 		ScreenEntity screenEntity = (ScreenEntity)entity;
@@ -95,26 +100,33 @@ public class ListFieldsBinder implements ScreenEntityBinder {
 				fieldAccessor = new SimpleScreenPojoFieldAccessor(screenEntity);
 			}
 
-			if (fieldDefinition.getJavaType() != List.class) {
+			if (fieldDefinition.getJavaType() != List.class && fieldDefinition.getJavaType() != String[].class) {
 				continue;
 			}
 			ListFieldTypeDefinition fieldTypeDefinition = (ListFieldTypeDefinition)fieldDefinition.getFieldTypeDefinition();
 			Assert.notNull(fieldTypeDefinition, "A field of type List is defined without @ScreenListField annotation");
 			TerminalPosition position = fieldDefinition.getPosition();
 
-			List<String> fieldValue = (List<String>)fieldAccessor.getFieldValue(fieldDefinition.getName());
-			String formater = String.format("%%-%ds", fieldTypeDefinition.getFieldLength() + 1);
+			// String formater = String.format("%%-%ds", fieldTypeDefinition.getFieldLength() + 1);
 			int gaps[] = fieldTypeDefinition.getGaps();
+			int skip = gaps.length == 1 ? 0 : 1;
+			List<String> fieldValue;
 
-			for (int i = 0; i < fieldTypeDefinition.getCount() - 1; i++) {
+			if (fieldDefinition.getJavaType() == List.class) {
+				fieldValue = (List<String>)fieldAccessor.getFieldValue(fieldDefinition.getName());
+			} else {
+				fieldValue = Arrays.asList((String[])fieldAccessor.getFieldValue(fieldDefinition.getName()));
+			}
+
+			for (int i = 0; i < fieldTypeDefinition.getCount(); i++) {
 				TerminalField field = snapshot.getField(SimpleTerminalPosition.newInstance(position.getRow(),
 						position.getColumn()));
 
-				field.setValue(String.format(formater, fieldValue.get(i)));
+				field.setValue(fieldFormatter.format(fieldValue.get(i)));
 				sendAction.getModifiedFields().add(field);
 
-				if (i != fieldTypeDefinition.getCount() - 2) {
-					position.moveBy(gaps[i]);
+				if (i < fieldTypeDefinition.getCount() - 1) {
+					position = position.moveBy(gaps[i * skip]);
 				}
 			}
 

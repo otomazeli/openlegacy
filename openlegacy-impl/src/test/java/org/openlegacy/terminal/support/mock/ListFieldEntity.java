@@ -30,8 +30,7 @@ public class ListFieldEntity implements org.openlegacy.terminal.ScreenEntity {
 	@ScreenListField(fieldLength = 9, count = 3, gaps = { 10 })
 	@ScreenField(row = 9, column = 25)
 	private String[] toysArray;
-	
-	
+
 	public String getFocusField() {
 		return null;
 	}

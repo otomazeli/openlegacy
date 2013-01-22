@@ -38,7 +38,6 @@ public class ListFieldTest extends AbstractTest {
 	public void testSendListAndArrayField() {
 		List<String> listNewValues = new ArrayList<String>();
 		listNewValues.add("Domino1");
-
 		listNewValues.add("Cube2");
 		listNewValues.add("Sevivon3");
 
@@ -55,8 +54,25 @@ public class ListFieldTest extends AbstractTest {
 
 		try {
 			terminalSession.doAction(TerminalActions.ENTER(), listScreenEntity);
-		} catch (SessionEndedException e) { // OK
+		} catch (SessionEndedException e) {
+			// OK
 		}
+	}
+
+	@Test
+	public void testArrayField() {
+
+		TerminalSession terminalSession = newTerminalSession();
+
+		String[] expectedResult = new String[3];
+		expectedResult[0] = "Barbi";
+		expectedResult[1] = "Winx";
+		expectedResult[2] = "Remi";
+
+		ListFieldEntity listLineScreen = terminalSession.getEntity(ListFieldEntity.class);
+
+		Assert.assertArrayEquals(expectedResult, listLineScreen.getToysArray());
+
 	}
 
 }
